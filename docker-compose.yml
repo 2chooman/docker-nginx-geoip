@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+    nginx-geoip:
+        build: .
+        environment:
+            - TZ=Europe/Moscow
+        ports:
+            - "8080:8080"
+            - "8443:8443"
+        volumes:
+            - ./nginx/sites-enabled:/etc/nginx/sites-enabled
+            - ./html:/var/www/html
+            - ./log:/var/log/nginx
+            - ./nginx/mmdb:/etc/nginx/mmdb
+        links:
+            - php-fpm
+        restart: unless-stopped
+    
+    php-fpm:
+        image: bitnami/php-fpm:latest
+        environment:
+            - TZ=Europe/Moscow
+        #ports:
+        #    - "9000:9000"
+        volumes:
+            - ./html:/var/www/html
+            - ./php/conf.d:/usr/local/etc/php/conf.d
+        restart: unless-stopped
+
